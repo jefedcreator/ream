@@ -16,9 +16,6 @@ contract ReamFactory {
     mapping(address => address) public userToReamAddr;
     mapping(address=>uint) public depositor;
 
-
-    address ream = userToReamAddr[msg.sender];
-
     modifier onlyAdmin() {
         require(msg.sender == admin,"Only admin can perform this action");
         _;
@@ -41,8 +38,8 @@ contract ReamFactory {
     }
 
     function sendFundsFromReam(uint amount, address _to, string memory desc) public onlyAdmin {
-        require(amount <= address(this).balance,"Amount above tresury");
-        (bool sent, bytes memory data) = userToReamAddr[msg.sender].delegatecall{gas: 5000}(abi.encodeWithSignature("sendFunds(uint amount, address _to, string memory desc)",amount,_to,desc));
+        require(amount <= userToReamAddr[msg.sender].balance,"Amount above tresury");
+        (bool sent, bytes memory data) = userToReamAddr[msg.sender].delegatecall(abi.encodeWithSignature("sendFunds(uint amount, address _to, string memory desc)",amount,_to,desc));
         require(sent, "Failed to send");
         emit Send(amount, _to, desc);
     }

@@ -39,7 +39,7 @@ const ContractInteraction = ({adminAddress,contract,displayContract,createReamTr
 
  useEffect(()=>{
     createReamTreasury();
- },[])
+ },[adminAddress])
 
   return (
     <div className={Styles.container}>
