@@ -35,14 +35,14 @@ contract ReamFactory {
 
     function depositToReam() public payable onlyAdmin{
         depositor[msg.sender] += msg.value;
-        (bool sent, ) = userToReamAddr[msg.sender].call{value:msg.value}(abi.encodeWithSignature("deposit()"));
+        (bool sent, ) = userToReamAddr[msg.sender].delegatecall(abi.encodeWithSignature("deposit()"));
         require(sent, "Failed to send");
         emit Receive(msg.value, msg.sender);
     }
 
     function sendFundsFromReam(uint amount, address _to, string memory desc) public onlyAdmin {
         require(amount <= address(this).balance,"Amount above tresury");
-        (bool sent, bytes memory data) = userToReamAddr[msg.sender].call{gas: 5000}(abi.encodeWithSignature("sendFunds(uint amount, address _to, string memory desc)",amount,_to,desc));
+        (bool sent, bytes memory data) = userToReamAddr[msg.sender].delegatecall{gas: 5000}(abi.encodeWithSignature("sendFunds(uint amount, address _to, string memory desc)",amount,_to,desc));
         require(sent, "Failed to send");
         emit Send(amount, _to, desc);
     }
