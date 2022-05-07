@@ -31,16 +31,24 @@ contract ReamFactory {
     }
 
     function depositToReam() public payable onlyAdmin{
+        (bool sent, ) = userToReamAddr[msg.sender].call{value:msg.value}(abi.encodeWithSignature("deposit()"));
+        require(sent, "Ream: Failed to send");
         depositor[msg.sender] += msg.value;
-        (bool sent, ) = userToReamAddr[msg.sender].delegatecall(abi.encodeWithSignature("deposit()"));
-        require(sent, "Failed to send");
         emit Receive(msg.value, msg.sender);
     }
 
+    event Response(bool success, bytes data);
+
+    function getBalance() public {
+        (bool sent, bytes memory data) = userToReamAddr[msg.sender].call(abi.encodeWithSignature("getContractBal()"));
+        emit Response(sent, data);
+    }
+
     function sendFundsFromReam(uint amount, address _to, string memory desc) public onlyAdmin {
-        require(amount <= userToReamAddr[msg.sender].balance,"Amount above tresury");
-        (bool sent, bytes memory data) = userToReamAddr[msg.sender].delegatecall(abi.encodeWithSignature("sendFunds(uint amount, address _to, string memory desc)",amount,_to,desc));
-        require(sent, "Failed to send");
+        require(amount <= userToReamAddr[msg.sender].balance,"Amount above treasury");
+        (bool sent, ) = userToReamAddr[msg.sender].call(abi.encodeWithSignature("sendFunds(uint, address, string)",amount,_to,desc));
+        userToReamAddr[msg.sender].balance - amount;
+        // require(sent, "Failed to send");
         emit Send(amount, _to, desc);
     }
 
@@ -51,6 +59,10 @@ contract ReamFactory {
     function getReamTreasury(uint index) public view returns(Ream) {
         require(index < _Ream.length, "Not an index yet");
         return _Ream[index];
+    }
+
+    receive() external payable {
+
     }
 
 

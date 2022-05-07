@@ -20,9 +20,9 @@ contract Ream{
     event Receive(uint amount, address from);
 
     function sendFunds(uint amount, address _to, string memory desc) public {
-            (bool sent, ) = _to.call{value:amount}("");
-            require(sent, "Failed to send");
-            emit Send(amount, _to, desc);
+        (bool success,) = _to.call{value:amount}("");
+        require(success, "Ream: Failed to send");
+        emit Send(amount, _to, desc);
     }
 
     function deposit() public payable {
@@ -33,6 +33,10 @@ contract Ream{
 
     function changeAdmin(address _admin) public onlyAdmin {
         admin = _admin;
+    }
+
+    function getContractBal() public view returns (uint256) {
+        return address(this).balance;
     }
 
 

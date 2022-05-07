@@ -1,8 +1,12 @@
+/* eslint-disable node/no-missing-import */
+/* eslint-disable no-unused-vars */
+/* eslint-disable spaced-comment */
 /* eslint-disable prettier/prettier */
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { Signer } from "ethers";
+import { BigNumberish, Signer } from "ethers";
 import { ethers } from "hardhat";
+import { send } from "process";
 import { ReamFactory } from "../typechain";
 let deployReamFactory:ReamFactory
 let owner:SignerWithAddress
@@ -42,22 +46,50 @@ describe("Ream Factory", function () {
     const res = await deposit.wait();
     //@ts-ignore
     const amount = res.events[0].args[0];
-    // const aamotDeposited = await deployReamFactory.depositor(owner.address);
     expect(amount).to.equal(ethers.utils.parseEther("1.0"));
   });
   it("Should send funds from ream", async function () {
+    const daoAdd = await deployReamFactory.userToReamAddr(owner.address);
+    const bal = await owner.getBalance();
+    console.log(`balance b4 ${bal}`);
+    
+    const opts = {value: ethers.utils.parseEther("1.0")};
+    const deposit =  await deployReamFactory.connect(owner).depositToReam(opts);
+    const res = await deposit.wait();
+    //@ts-ignore
+    const amount = res.events[0].args[0];
+    console.log(amount);
+    const bal2 = await owner.getBalance();
+    console.log(`balance after ${bal2}`);
+
+    const balbefore = await ethers.provider.getBalance(daoAdd)
+
+    // const getBal = await deployReamFactory.getBalance();
+    // const getBalTx = await getBal.wait();
+    // @ts-ignore
+    console.log(`balance of contract when deposited ${balbefore}`);
+    
     const desc = "Test run"
     const to = addr1.address
-    const deposit =  await (await deployReamFactory.sendFundsFromReam(0,to,desc)).wait();
-    console.log(deposit.events);
+    
+    const Payamount:any = {value:ethers.utils.parseEther("0.01")}
+    const sendOut =  await (await deployReamFactory.connect(owner).sendFundsFromReam(amount,to,desc)).wait();
+    // @ts-ignore
+    console.log(sendOut.events[0].args[0]);
+    
+    const balAfter = await ethers.provider.getBalance(daoAdd)
+    // const getBal2 = await deployReamFactory.connect(owner).getBalance()
+    // const getBalTx2 = await getBal2.wait();
+   // @ts-ignore
+   console.log(`balance of contract after funds sent out ${balAfter}`);
   });
   it("Should check ream address", async function () {
     const addr =  await deployReamFactory.userToReamAddr(owner.address)
-    console.log("addr",addr);
   });
   it("Should check for only admin upon sendFundsFromReam", async function () {
     const desc = "Test run"
     const to = addr1.address
+    const amount:any ={value:ethers.utils.parseEther('0.5')}
     const sendFund =  deployReamFactory.connect(addr1).sendFundsFromReam(0,to,desc);
     expect(sendFund).to.be.revertedWith("Only admin can perform this action");
   });
