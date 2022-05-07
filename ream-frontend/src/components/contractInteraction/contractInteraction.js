@@ -17,6 +17,7 @@ const ContractInteraction = ({adminAddress,contract,displayContract,createReamTr
               const ream = new ethers.Contract(CA,reamAbi,signer);
               const sendEvent = await ream.deposit();
               console.log(sendEvent);
+              setDepositValue("")
             } else {
                 
             }

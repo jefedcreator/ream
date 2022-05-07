@@ -15,7 +15,7 @@ function App() {
   const [adminAddress,setAdminAddress] = useState("");
   const[contract, setContract] = useState("")
   const[displayContract, setDisplayContract] = useState(false);
-  const[sendEvent,setSendEvent] = useState({});
+  const[event,setEvent] = useState([]);
   // const ContractContext= createContext("")
 
   const createReamTreasury = async() =>{
@@ -69,9 +69,33 @@ function App() {
   try {
       if (window.ethereum) {
         const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
-        const ream = new ethers.Contract(contract,reamAbi,provider)
+        const ream = new ethers.Contract(CA,abi,provider)
         const sendEvent = await ream.queryFilter("Send");
-        console.log("sendEvent",await sendEvent);
+        // console.log("sendEvent", sendEvent);
+
+        const Event = []
+
+        sendEvent.forEach(data=>{
+          Event.unshift({ 
+            amount: data.args[0],
+            to: data.args[1],
+            desc: data.args[2],
+            time: data.args[3]
+          })
+        })
+
+        // setEvent(Event)
+        ream.on("Send", (amount,to,desc,_time) => {
+          const newEvent = {
+            to:to,
+            amount: amount,
+            time: _time.toString(),
+            desc:desc
+          }
+    
+          //setEvent(prev => [newEvent, ...prev]);
+        })
+        // console.log(event);
       } else {
           
       }
@@ -84,9 +108,31 @@ function App() {
   try {
       if (window.ethereum) {
         const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URL);
-        const ream = new ethers.Contract(contract,reamAbi,provider)
+        const ream = new ethers.Contract(CA,abi,provider)
         const receiveEvent = await ream.queryFilter("Receive");
-        console.log("receiveEvent",receiveEvent);
+        const Event = []
+
+        receiveEvent.forEach(data =>{
+          Event.unshift(
+            {
+              amount:data.args[0],
+              from:data.args[1],
+              time:data.args[2]
+            }
+          )
+        })
+        
+        setEvent(Event)
+
+        ream.on("Receive", (amount,from, _time) => {
+          const newEvent = {
+            from:from,
+            amount: amount,
+            time: _time.toString(),
+          }
+    
+          setEvent(prev => [newEvent, ...prev]);
+        })
       } else {
           
       }
@@ -111,6 +157,7 @@ function App() {
             contract={contract}
             getSendEvents={getSendEvents}
             getReceiveEvents={getReceiveEvents}
+            event={event}
         />} />
         <Route path='/investment' element={<Investment/>} />
         <Route path='/sendfund' element={<Sendfund

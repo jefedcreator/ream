@@ -4,7 +4,7 @@ import Header from './../../components/header/header'
 import Styles from './receipt.module.css'
 import ReceiptEvent from '../../components/receiptEvent/receiptEvent'
 
-const Receipt = ({contract,getSendEvents,getReceiveEvents}) => {
+const Receipt = ({contract,getSendEvents,getReceiveEvents,event}) => {
   return (
     <div>
         <Header/>
@@ -14,6 +14,7 @@ const Receipt = ({contract,getSendEvents,getReceiveEvents}) => {
             contract={contract}
             getSendEvents={getSendEvents}
             getReceiveEvents={getReceiveEvents}
+            event={event}
             />
         </div>
     </div>

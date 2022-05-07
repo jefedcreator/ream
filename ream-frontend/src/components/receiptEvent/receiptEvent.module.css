@@ -1,0 +1,14 @@
+.wrapper{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1rem 8rem;
+}
+
+.table{
+    width: 100%;
+}
+
+.table__head_row{
+    height: 5rem;
+}

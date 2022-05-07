@@ -40,48 +40,53 @@ describe("Ream Factory", function () {
     const admin = await deployReamFactory.admin();
     expect(admin).to.equal(owner.address);
   });
-  it("Should deposit to ream", async function () {
-    const opt = {value: ethers.utils.parseEther("1.0")};
-    const deposit =  await deployReamFactory.connect(owner).depositToReam(opt);
-    const res = await deposit.wait();
-    //@ts-ignore
-    const amount = res.events[0].args[0];
-    expect(amount).to.equal(ethers.utils.parseEther("1.0"));
-  });
+//   it("Should deposit to ream", async function () {
+//     const opt = {value: ethers.utils.parseEther("1.0")};
+//     const deposit =  await deployReamFactory.connect(owner).depositToReam(opt);
+//     const res = await deposit.wait();
+//     //@ts-ignore
+//     const amount = res.events[0].args[0];
+//     expect(amount).to.equal(ethers.utils.parseEther("1.0"));
+//   });
   it("Should send funds from ream", async function () {
-    const daoAdd = await deployReamFactory.userToReamAddr(owner.address);
-    const bal = await owner.getBalance();
-    console.log(`balance b4 ${bal}`);
+   
+    // const daoAdd = await deployReamFactory.userToReamAddr(owner.address)
+    // const reamBal = await ethers.provider.getBalance(daoAdd) 
+    const getBal0 = await deployReamFactory.connect(owner).getBalance();
+    const getBalTx0 = await getBal0.wait();
+    //@ts-ignore
+    console.log(getBalTx0.events[0].args);
+    // console.log(`balance of contract before deposit ${reamBal}`);
+    // console.log(daoAdd);
     
-    const opts = {value: ethers.utils.parseEther("1.0")};
+    const opts = {value: ethers.utils.parseEther("10")};
     const deposit =  await deployReamFactory.connect(owner).depositToReam(opts);
     const res = await deposit.wait();
     //@ts-ignore
-    const amount = res.events[0].args[0];
+    const amount = res.events[0];
     console.log(amount);
-    const bal2 = await owner.getBalance();
-    console.log(`balance after ${bal2}`);
+    //     expect(amount).to.equal(ethers.utils.parseEther("1.0"));
 
-    const balbefore = await ethers.provider.getBalance(daoAdd)
-
-    // const getBal = await deployReamFactory.getBalance();
-    // const getBalTx = await getBal.wait();
+    // console.log(`balance of contract after deposited ${reamBal}`);
+  
+    const getBal = await deployReamFactory.connect(owner).getBalance();
+    const getBalTx = await getBal.wait();
     // @ts-ignore
-    console.log(`balance of contract when deposited ${balbefore}`);
+    console.log(getBalTx.events[0].args);
     
     const desc = "Test run"
     const to = addr1.address
     
-    const Payamount:any = {value:ethers.utils.parseEther("0.01")}
-    const sendOut =  await (await deployReamFactory.connect(owner).sendFundsFromReam(amount,to,desc)).wait();
+    const Payamount = 5
+    const sendOut =  await (await deployReamFactory.connect(owner).sendFundsFromReam(Payamount,to,desc)).wait();
     // @ts-ignore
-    console.log(sendOut.events[0].args[0]);
+    console.log(sendOut.events[0]);
     
-    const balAfter = await ethers.provider.getBalance(daoAdd)
-    // const getBal2 = await deployReamFactory.connect(owner).getBalance()
-    // const getBalTx2 = await getBal2.wait();
+    // const balAfter = await ethers.provider.getBalance()
+    const getBal2 = await deployReamFactory.connect(owner).getBalance()
+    const getBalTx2 = await getBal2.wait();
    // @ts-ignore
-   console.log(`balance of contract after funds sent out ${balAfter}`);
+   console.log(getBalTx2.events[0].args);
   });
   it("Should check ream address", async function () {
     const addr =  await deployReamFactory.userToReamAddr(owner.address)
@@ -89,8 +94,7 @@ describe("Ream Factory", function () {
   it("Should check for only admin upon sendFundsFromReam", async function () {
     const desc = "Test run"
     const to = addr1.address
-    const amount:any ={value:ethers.utils.parseEther('0.5')}
-    const sendFund =  deployReamFactory.connect(addr1).sendFundsFromReam(0,to,desc);
+    const sendFund =  deployReamFactory.connect(addr1).sendFundsFromReam("1000000000000000000",to,desc);
     expect(sendFund).to.be.revertedWith("Only admin can perform this action");
   });
   it("Should check for only admin upon deposit", async function () {
