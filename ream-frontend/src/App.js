@@ -16,14 +16,13 @@ function App() {
   const[contract, setContract] = useState("")
   const[displayContract, setDisplayContract] = useState(false);
   const[event,setEvent] = useState([]);
-  const[chainId,setChainId] = useState(null)
+  
   // const ContractContext= createContext("")
 
   const handleChainId = async() =>{
-    const networkId = await window.ethereum.request({method: "eth_chainId"})
-    setChainId(networkId)
+    const chainId = await window.ethereum.request({method: "eth_chainId"})
     if (chainId != 8001) {
-        alert("Switch account to Matic mumbai testnet")
+        alert("Please switch account to Matic mumbai testnet")
     }
   }
 
