@@ -21,7 +21,7 @@ function App() {
 
   const handleChainId = async() =>{
     const chainId = await window.ethereum.request({method: "eth_chainId"})
-    if (chainId != 8001) {
+    if (Number(chainId) != 80001) {
         alert("Please switch account to Matic mumbai testnet")
     }
   }
