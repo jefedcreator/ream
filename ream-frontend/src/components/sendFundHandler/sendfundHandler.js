@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { reamAbi } from '../../utils/reamabi'
 import { ethers } from 'ethers';
 import Style from './sendfundHandler.module.css'
 
-const SendFundHandler = ({adminAddress,contract}) => {
+const SendFundHandler = ({adminAddress,contract,handleChainId}) => {
   const [amount,setAmount] = useState("");
   const [address, setAddress] = useState("");
   const[desc,setDesc] = useState("");
@@ -49,6 +49,11 @@ const SendFundHandler = ({adminAddress,contract}) => {
       console.log(error);
     }
   }
+
+  useEffect(()=>{
+      handleChainId()
+    },[]
+  )
 
   return (
     <div className={Style.container}>

@@ -16,7 +16,16 @@ function App() {
   const[contract, setContract] = useState("")
   const[displayContract, setDisplayContract] = useState(false);
   const[event,setEvent] = useState([]);
+  const[chainId,setChainId] = useState(null)
   // const ContractContext= createContext("")
+
+  const handleChainId = async() =>{
+    const networkId = await window.ethereum.request({method: "eth_chainId"})
+    setChainId(networkId)
+    if (chainId != 8001) {
+        alert("Switch account to Matic mumbai testnet")
+    }
+  }
 
   const createReamTreasury = async() =>{
     try {
@@ -152,6 +161,7 @@ function App() {
             contract={contract}
             displayContract={displayContract}
             createReamTreasury={createReamTreasury}
+            handleChainId={handleChainId}
         />} />
         <Route path='/receipt' element={<Receipt
             contract={contract}
@@ -163,6 +173,7 @@ function App() {
         <Route path='/sendfund' element={<Sendfund
           adminAddress={adminAddress}
           contract={contract}
+          handleChainId={handleChainId}
         />} />
       </Routes>
   </BrowserRouter>

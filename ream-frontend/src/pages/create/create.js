@@ -5,7 +5,7 @@ import Api from './../../components/api/api'
 import Styles from './create.module.css'
 import ContractInteraction from '../../components/contractInteraction/contractInteraction'
 
-const Create = ({adminAddress,contract,displayContract,createReamTreasury}) => {
+const Create = ({adminAddress,contract,displayContract,createReamTreasury,handleChainId}) => {
   return (
     <div>
         <Header/>
@@ -16,6 +16,7 @@ const Create = ({adminAddress,contract,displayContract,createReamTreasury}) => {
             contract={contract}
             displayContract={displayContract}
             createReamTreasury={createReamTreasury}
+            handleChainId={handleChainId}
             />
         </div>
     </div>

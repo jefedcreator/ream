@@ -4,9 +4,10 @@ import Styles from './contractInteraction.module.css'
 import { ethers } from 'ethers'
 import { reamAbi } from '../../utils/reamabi'
 
-const ContractInteraction = ({adminAddress,contract,displayContract,createReamTreasury}) => {
+const ContractInteraction = ({adminAddress,contract,displayContract,createReamTreasury,handleChainId}) => {
     const CA = contract
     const[depositValue,setDepositValue] = useState("");
+
 
     const deposit = async(e) =>{
         e.preventDefault();
@@ -40,6 +41,7 @@ const ContractInteraction = ({adminAddress,contract,displayContract,createReamTr
 
  useEffect(()=>{
     createReamTreasury();
+    handleChainId()
  },[adminAddress])
 
   return (

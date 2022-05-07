@@ -4,7 +4,7 @@ import Header from './../../components/header/header'
 import Styles from './sendfund.module.css'
 import SendFundHandler from '../../components/sendFundHandler/sendfundHandler'
 
-const Sendfund = ({adminAddress,contract}) => {
+const Sendfund = ({adminAddress,contract,handleChainId}) => {
   return (
     <div>
         <Header/>
@@ -13,6 +13,7 @@ const Sendfund = ({adminAddress,contract}) => {
             <SendFundHandler
             adminAddress={adminAddress}
             contract={contract}
+            handleChainId={handleChainId}
             />
         </div>
     </div>
